@@ -3,9 +3,7 @@ import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import userModel from '../models/user.model.js';
 import User from "../models/user.model.js";
-
 import { signToken } from '../utils/jwt.js';
-import sequelize from '../config/database.js';
 import dotenv from 'dotenv';
 dotenv.config();
 const SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS || '10', 10);
