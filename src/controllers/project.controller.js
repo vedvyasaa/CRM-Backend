@@ -6,14 +6,14 @@ export async function listProjects(req, res, next) {
   try {
     const where = {};
     if (req.query.clientId) where.clientId = req.query.clientId;
-    const projects = await Project.findAll({ where, include: [{ model: Client, as: 'client' }, { model: User, as: 'staff', attributes: ['id','name','email'] }, { model: ProjectComment, as: 'comments' }], order: [['createdAt','DESC']] });
+    const projects = await Project.findAll({ where, include: [{ model: Client, as: 'client' }, { model: User, as: 'staff', attributes: ['id', 'name', 'email'] }, { model: ProjectComment, as: 'comments' }], order: [['createdAt', 'DESC']] });
     res.json({ data: projects });
   } catch (err) { next(err); }
 }
 
 export async function getProject(req, res, next) {
   try {
-    const project = await Project.findByPk(req.params.id, { include: [{ model: Client, as: 'client' }, { model: User, as: 'staff', attributes: ['id','name','email'] }, { model: ProjectComment, as: 'comments' }] });
+    const project = await Project.findByPk(req.params.id, { include: [{ model: Client, as: 'client' }, { model: User, as: 'staff', attributes: ['id', 'name', 'email'] }, { model: ProjectComment, as: 'comments' }] });
     if (!project) return res.status(404).json({ error: 'Project not found' });
     res.json({ project });
   } catch (err) { next(err); }
@@ -24,7 +24,16 @@ export async function createProject(req, res, next) {
     const { clientId, title, description, startDate, endDate, status = 'Planned', progress = 0, assignedStaff = [] } = req.body;
     const client = await Client.findByPk(clientId);
     if (!client) return res.status(400).json({ error: 'Invalid clientId' });
-    const project = await Project.create({ id: uuidv4(), clientId, title, description, startDate, endDate, status, progress });
+    const project = await Project.create({
+      // id: uuidv4(),
+      clientId,
+      title,
+      description,
+      startDate,
+      endDate,
+      status,
+      progress
+    });
     if (Array.isArray(assignedStaff) && assignedStaff.length > 0) {
       for (const s of assignedStaff) {
         const staff = await User.findByPk(s);
@@ -38,7 +47,7 @@ export async function createProject(req, res, next) {
 export async function updateProject(req, res, next) {
   try {
     const id = req.params.id;
-    const allowed = ['title','description','startDate','endDate','status','progress'];
+    const allowed = ['title', 'description', 'startDate', 'endDate', 'status', 'progress'];
     const payload = {};
     for (const k of allowed) if (req.body[k] !== undefined) payload[k] = req.body[k];
     await Project.update(payload, { where: { id } });

@@ -21,9 +21,19 @@ export async function getLead(req, res, next) {
 export async function createLead(req, res, next) {
   try {
     const { name, email, phone, source, assignedToId, notes } = req.body;
-    const lead = await Lead.create({ id: uuidv4(), name, email, phone, source, notes, assignedToId: assignedToId || null });
+    const lead = await Lead.create({
+      // id: uuidv4(),
+      name,
+      email,
+      phone,
+      source,
+      notes,
+      assignedToId: assignedToId ? Number(assignedToId) : null
+    });
     res.status(201).json({ lead });
-  } catch (err) { next(err); }
+  } catch (err) {
+    next(err);
+  }
 }
 
 export async function updateLead(req, res, next) {

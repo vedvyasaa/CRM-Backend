@@ -4,7 +4,7 @@ dotenv.config();
 
 import app from "./app.js";
 import sequelize from "./config/database.js";
-import "./models/user.model.js"
+import "./config/database.js"
 
 const PORT = process.env.PORT || 5000;
 
